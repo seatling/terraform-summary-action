@@ -1,0 +1,149 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.0",
+  "resource_changes": [
+    {
+      "address": "aws_instance.web",
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "web",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "id": "i-0123456789abcdef0",
+          "instance_type": "t2.micro"
+        },
+        "after": {
+          "id": "i-0123456789abcdef0",
+          "instance_type": "t3.micro"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_s3_bucket.data_bucket",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "data_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {
+          "bucket": "my-app-data-bucket-prod",
+          "force_destroy": false
+        },
+        "after_unknown": {
+          "id": true
+        }
+      }
+    },
+    {
+      "address": "aws_security_group_rule.legacy",
+      "mode": "managed",
+      "type": "aws_security_group_rule",
+      "name": "legacy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["delete"],
+        "before": {
+          "from_port": 8080,
+          "to_port": 8080
+        },
+        "after": null
+      }
+    },
+    {
+      "address": "aws_eip.ip",
+      "mode": "managed",
+      "type": "aws_eip",
+      "name": "ip",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["delete", "create"],
+        "before": {
+          "id": "eipalloc-0123",
+          "public_ip": "54.214.1.1"
+        },
+        "after": {
+          "instance": "i-0123456789abcdef0"
+        },
+        "after_unknown": {
+          "id": true,
+          "public_ip": true
+        }
+      },
+      "action_reason": "replace_because_cannot_update"
+    },
+    {
+      "address": "module.network.aws_route53_record.dns[\"app\"]",
+      "module_address": "module.network",
+      "mode": "managed",
+      "type": "aws_route53_record",
+      "name": "dns",
+      "index": "app",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {
+          "name": "app.example.com"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_iam_role.imported_role",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "imported_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {
+          "name": "existing-role"
+        },
+        "after_unknown": {},
+        "importing": {
+          "id": "existing-role"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.app_subnet",
+      "previous_address": "aws_subnet.old_app_subnet",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "app_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["no-op"],
+        "before": { "cidr_block": "10.0.1.0/24" },
+        "after": { "cidr_block": "10.0.1.0/24" }
+      }
+    },
+    {
+      "address": "data.aws_ami.ubuntu",
+      "mode": "data",
+      "type": "aws_ami",
+      "name": "ubuntu",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["read"],
+        "before": null,
+        "after_unknown": { "id": true }
+      }
+    }
+  ],
+  "output_changes": {
+    "new_url": {
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": "https://app.example.com"
+      }
+    }
+  }
+}

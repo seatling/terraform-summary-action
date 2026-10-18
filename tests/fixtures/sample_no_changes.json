@@ -1,0 +1,16 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.0",
+  "resource_changes": [
+    {
+      "address": "aws_instance.web",
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "web",
+      "change": {
+        "actions": ["no-op"]
+      }
+    }
+  ],
+  "output_changes": {}
+}

@@ -1,0 +1,47 @@
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+  ~ update in-place
+  - destroy
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # aws_instance.web will be updated in-place
+  ~ resource "aws_instance" "web" {
+        id            = "i-0123456789abcdef0"
+      ~ instance_type = "t2.micro" -> "t3.micro"
+    }
+
+  # aws_s3_bucket.data_bucket will be created
+  + resource "aws_s3_bucket" "data_bucket" {
+      + bucket        = "my-app-data-bucket-prod"
+      + force_destroy = false
+    }
+
+  # aws_security_group_rule.legacy will be destroyed
+  - resource "aws_security_group_rule" "legacy" {
+      - from_port = 8080 -> null
+    }
+
+  # aws_eip.ip must be replaced
+-/+ resource "aws_eip" "ip" {
+      ~ public_ip = "54.214.1.1" -> (known after apply)
+    }
+
+  # module.network.aws_route53_record.dns["app"] will be created
+  + resource "aws_route53_record" "dns" {
+      + name = "app.example.com"
+    }
+
+  # aws_iam_role.imported_role will be imported
+  # (resource will be imported into your state)
+
+  # data.aws_ami.ubuntu will be read during apply
+ <= data "aws_ami" "ubuntu" {
+      + id = (known after apply)
+    }
+
+Plan: 2 to add, 1 to change, 1 to destroy, 1 to import.
+
+Changes to Outputs:
+  + new_url = "https://app.example.com"

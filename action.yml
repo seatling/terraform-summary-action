@@ -1,26 +1,20 @@
-author: sgametrio
-name: 'Terraform summary report'
-description: 'Creates a Job summary from a "terraform plan" output file'
+name: "Terraform Plan Summary"
+description: 'Creates a Job summary from a "terraform show -json" plan file'
+author: seatling
 branding:
-  icon: type
+  icon: table
   color: purple
+
 inputs:
-  # TODO: Detect whether JSON or not and format accordingly
-  log-file:
-    description: Path to file containing terraform plan text output
-    required: true
-  title:
-    description: Title of the job summary
+  plan-file:
+    description: "Path to Terraform plan JSON file (generated via: terraform show -json tfplan.binary > tfplan.json)"
     required: false
-    default: ""
+    default: tfplan.json
+  title:
+    description: "Title of the job summary"
+    required: false
+    default: "Terraform Plan Summary"
+
 runs:
-  using: "composite"
-  steps:
-    # Adds this folder to the system path
-    - shell: bash
-      run: echo "${{ github.action_path }}" >> $GITHUB_PATH
-    - shell: bash
-      run: |
-        TF_OUT=$(format-output.sh "${{inputs.log-file}}")
-        test -n "${{ inputs.title }}" && echo "## ${{ inputs.title }}" >> $GITHUB_STEP_SUMMARY
-        echo "$TF_OUT" >> $GITHUB_STEP_SUMMARY
+  using: "node24"
+  main: "index.js"
