@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
 const { parsePlan } = require('../lib/parser');
-const { formatSummary, renderCollapsiblePlan } = require('../lib/formatter');
+const { formatSummary } = require('../lib/formatter');
 
 describe('Terraform Plan JSON Parser', () => {
   const sampleJson = fs.readFileSync(path.join(__dirname, 'fixtures', 'sample_plan.json'), 'utf8');
@@ -80,11 +80,10 @@ describe('Markdown Formatter', () => {
   const sampleJson = fs.readFileSync(path.join(__dirname, 'fixtures', 'sample_plan.json'), 'utf8');
   const noChangesJson = fs.readFileSync(path.join(__dirname, 'fixtures', 'sample_no_changes.json'), 'utf8');
 
-  test('renders title, summary, tables, and collapsible JSON plan', () => {
+  test('renders title, summary, and tables without attaching the full plan', () => {
     const parsed = parsePlan(sampleJson);
     const md = formatSummary(parsed, {
-      title: 'Production Deployment',
-      rawJsonPlan: sampleJson
+      title: 'Production Deployment'
     });
 
     assert.match(md, /## Production Deployment/);
@@ -97,22 +96,20 @@ describe('Markdown Formatter', () => {
     assert.match(md, /requires new resource/);
     assert.match(md, /### 📤 Output Changes/);
     assert.match(md, /`new_url`/);
-    assert.match(md, /<details>/);
-    assert.match(md, /<summary>📋 View Full Terraform Plan \(JSON\)<\/summary>/);
-    assert.match(md, /```json/);
-    assert.match(md, /<\/details>/);
+    // Full plan is not attached
+    assert.doesNotMatch(md, /<details>/);
+    assert.doesNotMatch(md, /```json/);
   });
 
-  test('renders note alert for no changes plan with collapsible JSON', () => {
+  test('renders note alert for no changes plan without attaching full plan', () => {
     const parsed = parsePlan(noChangesJson);
     const md = formatSummary(parsed, {
-      title: 'No Changes Test',
-      rawJsonPlan: noChangesJson
+      title: 'No Changes Test'
     });
 
     assert.match(md, /> \[!NOTE\]/);
     assert.match(md, /No changes\./);
-    assert.match(md, /<details>/);
-    assert.match(md, /```json/);
+    assert.doesNotMatch(md, /<details>/);
+    assert.doesNotMatch(md, /```json/);
   });
 });

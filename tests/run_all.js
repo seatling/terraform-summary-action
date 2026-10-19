@@ -19,7 +19,7 @@ const fixtures = path.join(__dirname, 'fixtures');
 let total = 0;
 let passed = 0;
 
-function runIntegrationTest(name, args, checks, customEnv = {}) {
+function runIntegrationTest(name, args, checks, customEnv = {}, disallowed = []) {
   total++;
   // Clean runner environment so tests don't leak outer GitHub Actions variables
   const cleanEnv = { ...process.env };
@@ -42,6 +42,13 @@ function runIntegrationTest(name, args, checks, customEnv = {}) {
         assert(output.includes(check), `Expected output to contain: "${check}"`);
       } else if (check instanceof RegExp) {
         assert(check.test(output), `Expected output to match: ${check}`);
+      }
+    }
+    for (const forbidden of disallowed) {
+      if (typeof forbidden === 'string') {
+        assert(!output.includes(forbidden), `Expected output NOT to contain: "${forbidden}"`);
+      } else if (forbidden instanceof RegExp) {
+        assert(!forbidden.test(output), `Expected output NOT to match: ${forbidden}`);
       }
     }
     console.log(`  ✅ PASS: ${name}`);
@@ -68,12 +75,10 @@ runIntegrationTest(
     '| 📥 `import` | `aws_iam_role.imported_role` | id: `existing-role` |',
     '| 📦 `move` | `aws_subnet.app_subnet` | from `aws_subnet.old_app_subnet` |',
     '### 📤 Output Changes',
-    '| ➕ `create` | `new_url` |',
-    '<details>',
-    '<summary>📋 View Full Terraform Plan (JSON)</summary>',
-    '```json',
-    '</details>'
-  ]
+    '| ➕ `create` | `new_url` |'
+  ],
+  {},
+  ['<details>', 'View Full Terraform Plan']
 );
 
 runIntegrationTest(
@@ -81,11 +86,10 @@ runIntegrationTest(
   [path.join(fixtures, 'sample_no_changes.json')],
   [
     '> [!NOTE]',
-    '**No changes.** Your infrastructure matches the configuration.',
-    '<details>',
-    '<summary>📋 View Full Terraform Plan (JSON)</summary>',
-    '```json'
-  ]
+    '**No changes.** Your infrastructure matches the configuration.'
+  ],
+  {},
+  ['<details>', 'View Full Terraform Plan']
 );
 
 runIntegrationTest(
@@ -110,7 +114,8 @@ runIntegrationTest(
   'Resolves input via INPUT_PLAN-FILE runner env var',
   [],
   ['### 📊 Plan Summary'],
-  { 'INPUT_PLAN-FILE': path.join(fixtures, 'sample_plan.json'), 'INPUT_TITLE': 'Runner Env Test' }
+  { 'INPUT_PLAN-FILE': path.join(fixtures, 'sample_plan.json'), 'INPUT_TITLE': 'Runner Env Test' },
+  ['<details>']
 );
 
 // Test writing to GITHUB_STEP_SUMMARY when variable is set

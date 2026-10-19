@@ -16,10 +16,9 @@ A high-performance GitHub Action that generates a rich, structured [Job Summary]
   - `📦 move` (with prior resource address)
   - `📖 read` (data sources)
 - 📤 **Output Changes Table**: Highlights changes to root module outputs.
-- 📋 **Collapsible Full Plan**: The complete plan is preserved inside an expandable `<details>` section formatted in JSON.
+- ⚡ **Lightweight & Fast**: Focused purely on summary metrics and resource changes without attaching bloated plan payloads to your job summary.
 - ✅ **No Changes Detection**: Renders a clean GitHub callout (`> [!NOTE]`) when infrastructure matches configuration.
-- ⚡ **Zero-Dependency Node.js Action**: Built on native Node 20 with zero external npm dependencies.
-- 🛡️ **Payload Limit Guard**: Safely enforces a threshold to protect against GitHub Step Summary's 1024 KiB payload limit.
+- 🛡️ **Zero-Dependency Node.js Action**: Built on native Node 20 with zero external npm dependencies.
 
 ---
 
@@ -50,19 +49,6 @@ A high-performance GitHub Action that generates a rich, structured [Job Summary]
 | :--- | :--- |
 | ➕ `create` | `new_url` |
 
-<details>
-<summary>📋 View Full Terraform Plan (JSON)</summary>
-
-```json
-{
-  "format_version": "1.2",
-  "terraform_version": "1.9.0",
-  ...
-}
-```
-
-</details>
-
 ---
 
 ## Usage
@@ -73,8 +59,12 @@ A high-performance GitHub Action that generates a rich, structured [Job Summary]
     terraform plan -out=tfplan.binary
     terraform show -json tfplan.binary > tfplan.json
 
-- name: Generate Terraform Plan Job Summary
-  uses: seatling/terraform-summary-action@v1.0.0
+- name: Generate Job Summary
+  uses: sgametrio/terraform-summary-action@main
+  with:
+    plan-file: tfplan.json
+    # Optional header title
+    title: "Staging Environment Plan"
 ```
 
 ## Inputs

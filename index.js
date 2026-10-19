@@ -50,10 +50,7 @@ function run() {
     }
 
     const parsedPlan = parsePlan(rawJson);
-    const markdown = formatSummary(parsedPlan, {
-      title,
-      rawJsonPlan: rawJson
-    });
+    const markdown = formatSummary(parsedPlan, { title });
 
     writeOutput(markdown);
   } catch (err) {
